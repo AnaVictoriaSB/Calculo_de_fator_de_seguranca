@@ -1,0 +1,48 @@
+# Função para verificar se as tensões estão dentro do limite de segurança
+def verificar_seguranca(tensao, tensao_escoamento, fator_seguranca):
+    limite_seguro = tensao_escoamento / fator_seguranca
+    return tensao <= limite_seguro
+
+# Função para calcular o fator de segurança
+def calculo_fator_seguranca(tensao_escoamento, tensao_maxima):
+    return tensao_escoamento / tensao_maxima
+
+def main():
+    # Entrada de dados
+
+    # Conversão de bar para MPa (1 bar = 0.1 MPa)
+    pressao_interna = float(input("Digite a pressao interna do vaso (em bar): ")) * 0.1
+    raio_interno = float(input("Digite o raio interno do vaso (em metros): "))
+    espessura = float(input("Digite a espessura da parede (em metros): "))
+    tensao_escoamento = float(input("Digite a tensao de escoamento do material (em MPa): "))
+
+    # Cálculo das tensões
+    tensao_circunferencial = (pressao_interna * raio_interno) / espessura
+    tensao_longitudinal = (pressao_interna * raio_interno) / (2 * espessura)
+
+    # Cálculo do fator de segurança para a maior tensão
+    tensao_maxima = max(tensao_circunferencial, tensao_longitudinal)
+    fator_seguranca = calculo_fator_seguranca(tensao_escoamento, tensao_maxima)
+
+    # Exibição dos resultados
+    print("\nResultados:")
+    print(f"Tensao Circunferencial (sigma_c): {tensao_circunferencial:.2f} MPa")
+    print(f"Tensao Longitudinal (sigma_l): {tensao_longitudinal:.2f} MPa")
+    print(f"Fator de Seguranca Calculado: {fator_seguranca:.2f}")
+
+    # Verificação de segurança
+    seguro_circunferencial = verificar_seguranca(tensao_circunferencial, tensao_escoamento, fator_seguranca)
+    seguro_longitudinal = verificar_seguranca(tensao_longitudinal, tensao_escoamento, fator_seguranca)
+
+    if seguro_circunferencial and seguro_longitudinal:
+        print("O vaso ESTÁ SEGURO e dentro do fator de seguranca disposto.")
+    else:
+        print("O vaso NÃO ESTÁ SEGURO conforme o fator de seguranca disposto.")
+        if not seguro_circunferencial:
+            print("> A tensao circunferencial excede o limite de seguranca.")
+        if not seguro_longitudinal:
+            print("> A tensao longitudinal excede o limite de seguranca.")
+
+if __name__ == "__main__":
+    main()
+
